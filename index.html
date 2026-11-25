@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Даъватнома ба вохӯрӣ 💌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pink: #e59bc4;
+      --bg-pink-deep: #d47cb0;
+      --card-white: #fff9fc;
+      --accent-pink: #ef3f86;
+      --accent-pink-dark: #c9266a;
+      --soft-gray: #cfc7d1;
+      --text-main: #2d1824;
+      --text-muted: #7c6372;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #1b0d15;
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100dvh;
+      background: linear-gradient(180deg, #eba5cd 0%, #df88ba 55%, #d676af 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px 18px 28px;
+    }
+
+    /* Сатри пешрафт дар боло */
+    .progress-wrap {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(86%, 370px);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 30;
+    }
+
+    .progress-wrap.visible {
+      display: flex;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.45);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 15%;
+      background: repeating-linear-gradient(
+        -45deg,
+        #ff5c9d,
+        #ff5c9d 8px,
+        #ff87b7 8px,
+        #ff87b7 16px
+      );
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .progress-heart {
+      font-size: 22px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 6px rgba(239, 63, 134, 0.45));
+    }
+
+    /* Экран 1: Лифофа */
+    .envelope-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .envelope-box {
+      width: 250px;
+      height: 165px;
+      background: linear-gradient(180deg, #ff4b93 0%, #e62976 100%);
+      border-radius: 14px;
+      position: relative;
+      box-shadow: 0 18px 36px rgba(155, 19, 76, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+    }
+
+    .envelope-box:active {
+      transform: scale(0.96);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 92px;
+      background: #ff9bc4;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      border-radius: 14px 14px 0 0;
+      transform-origin: top center;
+      transition: transform 0.55s ease;
+      z-index: 2;
+    }
+
+    .envelope-screen.opening .envelope-flap {
+      transform: rotateX(180deg);
+    }
+
+    .envelope-seal {
+      position: relative;
+      z-index: 3;
+      margin-top: 26px;
+      font-size: 30px;
+      filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.18));
+    }
+
+    .envelope-hint {
+      margin-top: 22px;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px rgba(145, 22, 74, 0.35);
+    }
+
+    /* Корти марҳилаҳо */
+    .step-card {
+      display: none;
+      width: 100%;
+      background: var(--card-white);
+      border-radius: 36px;
+      padding: 28px 20px 26px;
+      box-shadow: 0 20px 44px rgba(132, 16, 66, 0.24);
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      text-align: center;
+      position: relative;
+      z-index: 5;
+      animation: popIn 0.38s ease;
+    }
+
+    .step-card.active {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Плеери пораи филм */
+    .disc-emblem {
+      width: 118px;
+      height: 118px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ff79b0, #c81b63 72%, #7d0939 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      box-shadow: 0 10px 24px rgba(201, 38, 106, 0.3);
+      border: 4px solid #ffe4ef;
+    }
+
+    .disc-emblem.playing {
+      animation: spinDisc 5s linear infinite;
+    }
+
+    @keyframes spinDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .step-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .step-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .audio-timeline-wrap {
+      margin: 0 auto 12px;
+      max-width: 280px;
+    }
+
+    .audio-time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .audio-seek {
+      width: 100%;
+      accent-color: var(--accent-pink);
+      cursor: pointer;
+    }
+
+    .audio-error-note {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-pink-dark);
+      min-height: 16px;
+      margin-bottom: 8px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      margin-bottom: 16px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .play-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #ffe1ee;
+      color: var(--accent-pink-dark);
+      border: none;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 15px 18px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(180deg, #ff5498 0%, #dc2470 100%);
+      box-shadow: 0 8px 18px rgba(220, 36, 112, 0.32);
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      color: #6f6572;
+      background: #ded7e0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .emoji-hero {
+      font-size: 74px;
+      line-height: 1.1;
+      margin: 4px auto 12px;
+      filter: drop-shadow(0 8px 16px rgba(239, 63, 134, 0.2));
+    }
+
+    /* Майдонҳои сана ва вақт */
+    .dt-group {
+      text-align: left;
+      margin-bottom: 14px;
+    }
+
+    .dt-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .dt-input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1.5px solid #f0c2d6;
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Шабакаи интихоб бо смайликҳо */
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0 18px;
+    }
+
+    .emoji-option {
+      background: #ffffff;
+      border: 2px solid #f3d2e1;
+      border-radius: 20px;
+      padding: 16px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 14px rgba(145, 34, 80, 0.06);
+    }
+
+    .emoji-option.selected {
+      border-color: var(--accent-pink);
+      background: #fff0f6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(239, 63, 134, 0.2);
+    }
+
+    .emoji-option .big-em {
+      font-size: 46px;
+      line-height: 1;
+    }
+
+    .emoji-option .em-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* Экрани ниҳоӣ */
+    .final-badges {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      font-size: 52px;
+      margin: 10px 0 14px;
+    }
+
+    .summary-box {
+      background: #fff0f6;
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .share-status {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-pink-dark);
+      min-height: 18px;
+    }
+
+    .floating-hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .f-heart {
+      position: absolute;
+      bottom: -40px;
+      font-size: 24px;
+      opacity: 0.75;
+      animation: riseHeart 6s linear infinite;
+    }
+
+    @keyframes riseHeart {
+      0% { transform: translateY(0) scale(0.9); opacity: 0; }
+      15% { opacity: 0.8; }
+      85% { opacity: 0.8; }
+      100% { transform: translateY(-105dvh) scale(1.15); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-heart">🩷</div>
+  </div>
+
+  <div class="app-shell">
+    <!-- Марҳилаи 0: Лифофа -->
+    <div class="envelope-screen" id="step0">
+      <div class="envelope-box" id="envelopeBox">
+        <div class="envelope-flap"></div>
+        <div class="envelope-seal">🩵</div>
+      </div>
+      <div class="envelope-hint">Ба лифофа пахш кунед</div>
+    </div>
+
+    <!-- Марҳилаи 1: Пораи садоии филм бо овози ҳунарпеша -->
+    <div class="step-card" id="step1">
+      <div class="disc-emblem" id="discEmblem">🎬</div>
+      <div class="step-title">Гӯш деҳ, ҷонам ❤️</div>
+      <div class="step-subtitle">Ба вохӯрӣ меравӣ?</div>
+
+      <audio id="movieAudio" preload="auto" playsinline></audio>
+
+      <div class="audio-timeline-wrap">
+        <div class="audio-time-row">
+          <span id="audioCurrentTime">0:00</span>
+          <span id="audioDuration">0:00</span>
+        </div>
+        <input type="range" id="audioSeek" class="audio-seek" min="0" max="100" value="0" step="0.1" />
+      </div>
+
+      <div class="audio-error-note" id="audioStatusNote"></div>
+
+      <div class="player-controls">
+        <button type="button" class="ctrl-btn" id="replayQuoteBtn" title="Аз аввал">⏮</button>
+        <button type="button" class="play-btn" id="playQuoteBtn" title="Пахш / Таваққуф">▶</button>
+        <button type="button" class="ctrl-btn" id="stopQuoteBtn" title="Пеш">⏭</button>
+      </div>
+
+      <button type="button" class="btn-primary" id="yesDateBtn">Майлаш, хуб</button>
+      <button type="button" class="btn-secondary" id="thinkDateBtn">Фикр мекунам</button>
+    </div>
+
+    <!-- Марҳилаи 2: Савол дар бораи либос -->
+    <div class="step-card" id="step2">
+      <div class="emoji-hero">✨👗✨</div>
+      <div class="step-title">Ҳамон либосро мепӯшӣ?</div>
+      <div class="step-subtitle">Дар он хеле зебоӣ ✨</div>
+      <button type="button" class="btn-primary" data-next="3">Бо камоли майл</button>
+    </div>
+
+    <!-- Марҳилаи 3: Сана ва вақт -->
+    <div class="step-card" id="step3">
+      <div class="emoji-hero">🧸💘🧸</div>
+      <div class="step-title">Кай туро «дуздида» метавонам?</div>
+      <div class="step-subtitle">Рӯз ва вақти мувофиқро интихоб кун</div>
+
+      <div class="dt-group">
+        <label for="dateInput">Сана</label>
+        <input type="date" id="dateInput" class="dt-input" value="2026-11-28" />
+      </div>
+
+      <div class="dt-group">
+        <label for="timeInput">Вақт</label>
+        <input type="time" id="timeInput" class="dt-input" value="18:30" />
+      </div>
+
+      <button type="button" class="btn-primary" data-next="4">Санаро интихоб кун 🩷</button>
+    </div>
+
+    <!-- Марҳилаи 4: Чӣ кор кунем (смайликҳо ба ҷойи расм) -->
+    <div class="step-card" id="step4">
+      <div class="step-title">Чӣ кор кунем?</div>
+      <div class="step-subtitle">Интихоб кун, азизам ❤️</div>
+
+      <div class="emoji-grid" id="activityGrid">
+        <div class="emoji-option" data-value="Сайру гашт 🚶‍♀️">
+          <div class="big-em">🌆</div>
+          <div class="em-label">Сайру гашт</div>
+        </div>
+        <div class="emoji-option" data-value="Бо мошин гаштан 🚗">
+          <div class="big-em">🚘</div>
+          <div class="em-label">Бо мошин гаштан</div>
+        </div>
+        <div class="emoji-option" data-value="Синамо 🍿">
+          <div class="big-em">🍿</div>
+          <div class="em-label">Синамо</div>
+        </div>
+        <div class="emoji-option" data-value="Тарабхона 🥂">
+          <div class="big-em">🥂</div>
+          <div class="em-label">Тарабхона</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" id="toMovieStepBtn">Пеш</button>
+    </div>
+
+    <!-- Марҳилаи 5: Чӣ бубинем (смайликҳо ба ҷойи расм) -->
+    <div class="step-card" id="step5">
+      <div class="step-title">Чӣ бубинем?</div>
+      <div class="step-subtitle">Ман ба ҳамааш омодаам!</div>
+
+      <div class="emoji-grid" id="movieGrid">
+        <div class="emoji-option" data-value="Мультфилм 🧸">
+          <div class="big-em">🧸</div>
+          <div class="em-label">Мультфилм</div>
+        </div>
+        <div class="emoji-option" data-value="Мелодрама 💕">
+          <div class="big-em">💕</div>
+          <div class="em-label">Мелодрама</div>
+        </div>
+        <div class="emoji-option" data-value="Ҷангӣ 💥">
+          <div class="big-em">💥</div>
+          <div class="em-label">Ҷангӣ</div>
+        </div>
+        <div class="emoji-option" data-value="Фантастика 🚀">
+          <div class="big-em">🚀</div>
+          <div class="em-label">Фантастика</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" id="finishBtn">Тасдиқ кардан 💘</button>
+    </div>
+
+    <!-- Марҳилаи 6: Анҷом -->
+    <div class="step-card" id="step6">
+      <div class="final-badges">🍿💖🥂</div>
+      <div class="step-title">Ман хушбахтам! Бо бесабронӣ интизори вохӯриам ❤️</div>
+      <div class="summary-box" id="summaryBox"></div>
+      <button type="button" class="btn-primary" id="shareBtn">Мубодила кардан 💌</button>
+      <div class="share-status" id="shareStatus"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      telegramUsername: "xurwed07",
+      // Роҳ ба файли садоии филм бо овози ҳунарпеша дар репозитторияи шумо
+      movieAudioUrl: "movie.mp3"
+    };
+
+    const state = {
+      activity: "Синамо 🍿",
+      movieGenre: "Мелодрама 💕",
+      thinkClicks: 0
+    };
+
+    // Дилҳои ҳаракаткунанда дар пасманзар
+    const heartsContainer = document.getElementById("floatingHearts");
+    const heartEmojis = ["🩷", "💖", "💕", "💗", "✨"];
+    for (let i = 0; i < 12; i++) {
+      const h = document.createElement("div");
+      h.className = "f-heart";
+      h.textContent = heartEmojis[i % heartEmojis.length];
+      h.style.left = Math.random() * 94 + "%";
+      h.style.animationDelay = (Math.random() * 6).toFixed(1) + "s";
+      h.style.animationDuration = (5 + Math.random() * 4).toFixed(1) + "s";
+      heartsContainer.appendChild(h);
+    }
+
+    const progressWrap = document.getElementById("progressWrap");
+    const progressFill = document.getElementById("progressFill");
+
+    function goToStep(stepNumber) {
+      document.querySelectorAll(".step-card").forEach((el) => el.classList.remove("active"));
+      document.getElementById("step0").style.display = "none";
+
+      if (stepNumber === 0) {
+        document.getElementById("step0").style.display = "flex";
+        progressWrap.classList.remove("visible");
+        return;
+      }
+
+      const target = document.getElementById("step" + stepNumber);
+      if (target) {
+        target.classList.add("active");
+        progressWrap.classList.add("visible");
+        const pct = Math.min(100, Math.round((stepNumber / 6) * 100));
+        progressFill.style.width = pct + "%";
+      }
+
+      if (stepNumber === 6) {
+        renderSummary();
+      }
+    }
+
+    // Плеери пораи филм
+    const movieAudio = document.getElementById("movieAudio");
+    movieAudio.src = CONFIG.movieAudioUrl;
+
+    const playQuoteBtn = document.getElementById("playQuoteBtn");
+    const discEmblem = document.getElementById("discEmblem");
+    const audioCurrentTimeEl = document.getElementById("audioCurrentTime");
+    const audioDurationEl = document.getElementById("audioDuration");
+    const audioSeek = document.getElementById("audioSeek");
+    const audioStatusNote = document.getElementById("audioStatusNote");
+
+    function formatTime(sec) {
+      if (!Number.isFinite(sec) || sec < 0) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? "0" : ""}${s}`;
+    }
+
+    movieAudio.addEventListener("loadedmetadata", () => {
+      audioSeek.max = movieAudio.duration || 100;
+      audioDurationEl.textContent = formatTime(movieAudio.duration);
+      audioStatusNote.textContent = "";
+    });
+
+    movieAudio.addEventListener("timeupdate", () => {
+      if (!audioSeek.dragging) {
+        audioSeek.value = movieAudio.currentTime || 0;
+      }
+      audioCurrentTimeEl.textContent = formatTime(movieAudio.currentTime);
+    });
+
+    movieAudio.addEventListener("play", () => {
+      discEmblem.classList.add("playing");
+      playQuoteBtn.textContent = "⏸";
+    });
+
+    movieAudio.addEventListener("pause", () => {
+      discEmblem.classList.remove("playing");
+      playQuoteBtn.textContent = "▶";
+    });
+
+    movieAudio.addEventListener("ended", () => {
+      discEmblem.classList.remove("playing");
+      playQuoteBtn.textContent = "▶";
+      audioSeek.value = 0;
+    });
+
+    movieAudio.addEventListener("error", () => {
+      discEmblem.classList.remove("playing");
+      playQuoteBtn.textContent = "▶";
+      audioStatusNote.textContent = "Файли movie.mp3-ро дар паҳлӯи index.html боргузорӣ кунед";
+    });
+
+    audioSeek.addEventListener("input", () => {
+      movieAudio.currentTime = Number(audioSeek.value);
+      audioCurrentTimeEl.textContent = formatTime(movieAudio.currentTime);
+    });
+
+    async function playMovieAudio() {
+      try {
+        await movieAudio.play();
+      } catch {
+        audioStatusNote.textContent = "Барои шунидани овози ҳунарпеша ▶-ро пахш кунед";
+      }
+    }
+
+    function stopMovieAudio() {
+      movieAudio.pause();
+    }
+
+    // Марҳилаи 0 -> Марҳилаи 1
+    document.getElementById("step0").addEventListener("click", () => {
+      const box = document.getElementById("step0");
+      box.classList.add("opening");
+      setTimeout(() => {
+        goToStep(1);
+        playMovieAudio();
+      }, 420);
+    });
+
+    playQuoteBtn.addEventListener("click", () => {
+      if (movieAudio.paused) {
+        playMovieAudio();
+      } else {
+        stopMovieAudio();
+      }
+    });
+
+    document.getElementById("replayQuoteBtn").addEventListener("click", () => {
+      movieAudio.currentTime = 0;
+      playMovieAudio();
+    });
+
+    document.getElementById("stopQuoteBtn").addEventListener("click", () => {
+      stopMovieAudio();
+      goToStep(2);
+    });
+
+    // Тугмаҳои ҷавоб ба даъват
+    document.getElementById("yesDateBtn").addEventListener("click", () => {
+      stopMovieAudio();
+      goToStep(2);
+    });
+
+    const thinkBtn = document.getElementById("thinkDateBtn");
+    const thinkPhrases = [
+      "Боз каме фикр кун 🥺",
+      "Дар он ҷо ҳатман хуб ва гарм мешавад 💕",
+      "«Майлаш, хуб»-ро пахш кун, ман ҳама чизро фикр кардам 😉"
+    ];
+    thinkBtn.addEventListener("click", () => {
+      thinkBtn.textContent = thinkPhrases[state.thinkClicks % thinkPhrases.length];
+      state.thinkClicks++;
+    });
+
+    // Гузариш аз рӯи марҳилаҳо
+    document.querySelectorAll("[data-next]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        goToStep(Number(btn.getAttribute("data-next")));
+      });
+    });
+
+    // Интихоби кортҳои смайликдор
+    function setupEmojiGrid(gridId, stateKey, defaultVal) {
+      const grid = document.getElementById(gridId);
+      const items = grid.querySelectorAll(".emoji-option");
+      items.forEach((item) => {
+        if (item.getAttribute("data-value") === defaultVal) {
+          item.classList.add("selected");
+        }
+        item.addEventListener("click", () => {
+          items.forEach((el) => el.classList.remove("selected"));
+          item.classList.add("selected");
+          state[stateKey] = item.getAttribute("data-value");
+        });
+      });
+    }
+
+    setupEmojiGrid("activityGrid", "activity", state.activity);
+    setupEmojiGrid("movieGrid", "movieGenre", state.movieGenre);
+
+    document.getElementById("toMovieStepBtn").addEventListener("click", () => goToStep(5));
+    document.getElementById("finishBtn").addEventListener("click", () => goToStep(6));
+
+    function buildMessageText() {
+      const d = document.getElementById("dateInput").value || "—";
+      const t = document.getElementById("timeInput").value || "—";
+      return (
+        `💌 Ҷавоб ба даъватномаи вохӯрӣ:\n` +
+        `• Сана: ${d}\n` +
+        `• Вақт: ${t}\n` +
+        `• Машғулият: ${state.activity}\n` +
+        `• Филм: ${state.movieGenre}`
+      );
+    }
+
+    function renderSummary() {
+      const d = document.getElementById("dateInput").value || "—";
+      const t = document.getElementById("timeInput").value || "—";
+      document.getElementById("summaryBox").innerHTML =
+        `<b>📅 Сана:</b> ${d}<br>` +
+        `<b>⏰ Вақт:</b> ${t}<br>` +
+        `<b>✨ Машғулият:</b> ${state.activity}<br>` +
+        `<b>🎬 Чӣ бубинем:</b> ${state.movieGenre}`;
+    }
+
+    // Тугмаи "Мубодила кардан" тавассути менюи телефони шумо
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const text = buildMessageText();
+      const statusEl = document.getElementById("shareStatus");
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Даъватнома ба вохӯрӣ",
+            text: text
+          });
+          statusEl.textContent = "Менюи ирсол кушода шуд — барномаи дилхоҳро интихоб кунед!";
+          return;
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            statusEl.textContent = "Ирсол бекор карда шуд. Барои интихоби барнома дубора пахш кунед.";
+            return;
+          }
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = "Матни ҷавоб нусхабардорӣ шуд! Онро дар WhatsApp, Telegram ё Instagram гузоред.";
+      } catch {
+        statusEl.textContent = "Ташаккур! Ҷавоби шумо омода аст.";
+      }
+
+      if (CONFIG.telegramUsername) {
+        window.open(`https://t.me/${CONFIG.telegramUsername}?text=${encodeURIComponent(text)}`, "_blank");
+      }
+    });
+  </script>
+</body>
+</html>
